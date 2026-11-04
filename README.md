@@ -8,7 +8,7 @@ A reusable GitHub Action that reviews every pull request with Claude and posts *
 
 ![Inline review comment with a suggestion block, posted by this action on PR #1](docs/example-review.png)
 
-The screenshot is captured from the live review on [PR #1 (planted off-by-one and swallowed error)](https://github.com/jumilandelapena/ai-code-review-action/pull/1) with `pnpm screenshot --repo jumilandelapena/ai-code-review-action --pr 1`. A second demo is [PR #2 (planted missing await and wrong comparison)](https://github.com/jumilandelapena/ai-code-review-action/pull/2).
+The screenshot is captured from the live review on [PR #1 (planted off-by-one and a retry around a non-idempotent call)](https://github.com/jumilandelapena/ai-code-review-action/pull/1) with `pnpm screenshot --repo jumilandelapena/ai-code-review-action --pr 1`. A second demo is [PR #2 (planted missing `await` and a per-token price off by 1000×)](https://github.com/jumilandelapena/ai-code-review-action/pull/2). Both PRs stay open on purpose so the reviews can be read.
 
 ## Install
 
