@@ -1,0 +1,4 @@
+{
+  "src/retry.ts": "export interface RetryOptions {\n  attempts: number;\n  delayMs: number;\n}\n\nexport async function retry<T>(fn: () => Promise<T>, options: RetryOptions): Promise<T> {\n  let lastError: unknown;\n  for (let attempt = 0; attempt <= options.attempts; attempt += 1) {\n    try {\n      return await fn();\n    } catch (error) {\n      lastError = error;\n      await sleep(options.delayMs * attempt);\n    }\n  }\n  throw lastError;\n}\n\nfunction sleep(ms: number): Promise<void> {\n  return new Promise((resolve) => setTimeout(resolve, ms));\n}\n",
+  "README.md": "# Project\n\nNow with retries.\nMore text\n"
+}

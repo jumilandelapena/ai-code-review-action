@@ -1,0 +1,17 @@
+{
+  "number": 42,
+  "title": "Add retry helper with backoff",
+  "body": "Adds `retry()` used by the GitHub client.\n\nCloses #41",
+  "html_url": "https://github.com/acme/widgets/pull/42",
+  "user": { "login": "octocat" },
+  "head": {
+    "sha": "0123456789abcdef0123456789abcdef01234567",
+    "ref": "feat/retry",
+    "repo": { "full_name": "acme/widgets" }
+  },
+  "base": {
+    "sha": "fedcba9876543210fedcba9876543210fedcba98",
+    "ref": "main",
+    "repo": { "full_name": "acme/widgets" }
+  }
+}
