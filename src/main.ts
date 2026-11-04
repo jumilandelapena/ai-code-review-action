@@ -31,6 +31,16 @@ function intInput(name: string, fallback: number): number {
   return value;
 }
 
+function floatInput(name: string, fallback: number): number {
+  const raw = core.getInput(name).trim();
+  if (raw === "") return fallback;
+  const value = Number(raw);
+  if (!Number.isFinite(value) || value < 0) {
+    throw new Error(`input ${name} must be a non-negative number, got "${raw}"`);
+  }
+  return value;
+}
+
 function failOnInput(): Severity | "none" {
   const raw = (core.getInput("fail_on").trim() || "none").toLowerCase();
   if (raw === "none") return "none";
@@ -64,6 +74,7 @@ async function main(): Promise<void> {
   const failOn = failOnInput();
   const maxFiles = intInput("max_files", 40);
   const maxDiffTokens = intInput("max_diff_tokens", 60_000);
+  const maxCostUsd = floatInput("max_cost_usd", 0);
 
   const trigger = resolveTrigger({
     eventName: github.context.eventName,
@@ -90,7 +101,7 @@ async function main(): Promise<void> {
   const provider = buildProvider(apiKey);
   const outcome = await runReview(
     trigger.ref,
-    { model, failOn, maxFiles, maxDiffTokens, maxOutputTokens: MAX_OUTPUT_TOKENS },
+    { model, failOn, maxFiles, maxDiffTokens, maxOutputTokens: MAX_OUTPUT_TOKENS, maxCostUsd },
     { gh: new OctokitGitHubApi(token), provider, config: loaded.config, log: actionsLogger },
   );
 
