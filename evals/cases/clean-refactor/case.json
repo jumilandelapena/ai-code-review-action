@@ -1,0 +1,5 @@
+{
+  "description": "Extract slug generation into a helper and handle unicode",
+  "filename": "src/slug.ts",
+  "bug": null
+}

@@ -1,0 +1,9 @@
+{
+  "description": "Show the commenter's name above each comment",
+  "filename": "src/ui/comment-card.ts",
+  "bug": {
+    "line_contains": "header.innerHTML = ",
+    "categories": ["security"],
+    "note": "`author` is user-controlled and written with innerHTML; a name like `<img src=x onerror=...>` runs script. Use textContent or escape it."
+  }
+}

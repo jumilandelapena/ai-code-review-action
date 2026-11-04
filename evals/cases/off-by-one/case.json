@@ -1,0 +1,9 @@
+{
+  "description": "Add page slicing to the list endpoint",
+  "filename": "src/pagination.ts",
+  "bug": {
+    "line_contains": "i <= end",
+    "categories": ["bug", "correctness"],
+    "note": "Inclusive upper bound reads one element past the page and emits undefined for the last page."
+  }
+}

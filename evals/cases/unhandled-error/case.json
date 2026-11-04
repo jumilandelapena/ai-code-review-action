@@ -1,0 +1,9 @@
+{
+  "description": "Accept webhook deliveries from the billing provider",
+  "filename": "src/webhook.ts",
+  "bug": {
+    "line_contains": "const event = JSON.parse(rawBody) as WebhookEvent;",
+    "categories": ["bug", "correctness"],
+    "note": "`JSON.parse` on an untrusted body throws on malformed input and the error is not caught, so a bad delivery crashes the handler (unhandled rejection) instead of returning 400."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "description": "Serve uploaded attachments by file name",
+  "filename": "src/attachments.ts",
+  "bug": {
+    "line_contains": "const filePath = join(UPLOAD_DIR, name);",
+    "categories": ["security"],
+    "note": "`name` comes from the URL; `../../etc/passwd` escapes UPLOAD_DIR. The resolved path must be checked to stay inside the upload directory."
+  }
+}

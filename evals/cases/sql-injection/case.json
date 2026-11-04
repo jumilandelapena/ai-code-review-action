@@ -1,0 +1,9 @@
+{
+  "description": "Add search by name to the users repository",
+  "filename": "src/users-repo.ts",
+  "bug": {
+    "line_contains": "WHERE name ILIKE '%${query}%'",
+    "categories": ["security"],
+    "note": "User-controlled `query` is interpolated into SQL; a parameter placeholder must be used."
+  }
+}

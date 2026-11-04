@@ -1,0 +1,9 @@
+{
+  "description": "Send a welcome email after signup",
+  "filename": "src/welcome.ts",
+  "bug": {
+    "line_contains": "user.profile.email",
+    "categories": ["bug", "correctness"],
+    "note": "`profile` is optional on User; a user without a profile crashes the signup handler."
+  }
+}

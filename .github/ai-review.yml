@@ -1,0 +1,23 @@
+# Configuration for the AI code review action (this repo reviews itself with it).
+# Every key is optional. See README > Configuration for the full reference.
+
+# Extra globs to skip, on top of the built-in lock-file / generated / binary rules.
+ignore:
+  - "docs/**"
+  - "evals/cases/**"
+  - "test/fixtures/**"
+
+# Categories to concentrate on. Empty or omitted = all.
+focus: [bug, security, correctness]
+
+# Style nits are off: this repo has a formatter for that.
+style_comments: false
+
+# Language for comment text.
+language: en
+
+# Hard cap on inline findings per review.
+max_findings: 10
+
+# Claude effort level: low | medium | high | xhigh | max.
+effort: medium

@@ -15,7 +15,8 @@
     "test:watch": "vitest",
     "eval": "tsx evals/run.ts",
     "review:local": "tsx scripts/review-local.ts",
-    "check": "pnpm typecheck && pnpm test && pnpm build"
+    "check": "pnpm typecheck && pnpm test && pnpm build",
+    "screenshot": "tsx scripts/screenshot.ts"
   },
   "dependencies": {
     "@actions/core": "^3.0.1",
@@ -29,6 +30,7 @@
     "@types/node": "^20.19.0",
     "@vercel/ncc": "^0.45.0",
     "diff": "^9.0.0",
+    "playwright-core": "1.64.1",
     "tsx": "^4.23.15",
     "typescript": "^5.9.0",
     "vitest": "^5.1.0"

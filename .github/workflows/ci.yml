@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Typecheck, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm typecheck
+
+      - run: pnpm test
+
+      - run: pnpm build
+
+      - name: dist/ must be committed and up to date
+        run: |
+          git add -N dist
+          if ! git diff --exit-code dist/; then
+            echo "::error::dist/ is out of date. Run 'pnpm build' and commit the result."
+            exit 1
+          fi
+
+  eval:
+    name: Eval harness (mock provider)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Run the eval cases with the mock provider
+        env:
+          LLM_PROVIDER: mock
+        run: pnpm eval --out evals/out/mock-results.md
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eval-results-mock
+          path: evals/out/mock-results.md

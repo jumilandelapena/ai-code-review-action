@@ -1,0 +1,51 @@
+name: AI review (dogfooding)
+
+# `pull_request`, not `pull_request_target`: a PR from a fork never sees the
+# API key, and the GITHUB_TOKEN it gets is read-only. See README > Design decisions.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: ai-review-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: Review with Claude
+    # Run on every PR event, and on comments only when they start with /ai-review.
+    if: >-
+      github.event_name == 'pull_request' ||
+      (github.event.issue.pull_request && startsWith(github.event.comment.body, '/ai-review'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check that the API key secret exists
+        id: key
+        env:
+          KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$KEY" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::ANTHROPIC_API_KEY is not set in this repository; the AI review is skipped."
+          else
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Review this pull request
+        if: steps.key.outputs.present == 'true'
+        uses: ./
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ github.token }}
+          model: claude-opus-5-5
+          fail_on: none
+          max_files: 40
+          max_diff_tokens: 60000

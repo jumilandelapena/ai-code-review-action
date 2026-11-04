@@ -1,0 +1,9 @@
+{
+  "description": "Add withdraw() to the wallet service",
+  "filename": "src/wallet.ts",
+  "bug": {
+    "line_contains": "await this.store.setBalance(accountId, balance - amountCents);",
+    "categories": ["bug", "correctness"],
+    "note": "Read-modify-write across two awaits with no transaction or atomic decrement: two concurrent withdrawals both pass the check and overdraw the account."
+  }
+}

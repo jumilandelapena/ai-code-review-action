@@ -1,0 +1,9 @@
+{
+  "description": "Restrict the admin panel to allowed roles",
+  "filename": "src/authorize.ts",
+  "bug": {
+    "line_contains": "ALLOWED_ROLES.indexOf(role) > 0",
+    "categories": ["bug", "security", "correctness"],
+    "note": "`indexOf` returns 0 for the first allowed role (`owner`), so owners are denied; the check must be `!== -1` or `includes`."
+  }
+}

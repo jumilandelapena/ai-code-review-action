@@ -1,0 +1,9 @@
+{
+  "description": "Validate session tokens before serving account data",
+  "filename": "src/account-handler.ts",
+  "bug": {
+    "line_contains": "const valid = verifyToken(token);",
+    "categories": ["bug", "security", "correctness"],
+    "note": "`verifyToken` is async; the un-awaited Promise is always truthy, so every token passes."
+  }
+}

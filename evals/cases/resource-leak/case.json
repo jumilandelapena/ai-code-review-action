@@ -1,0 +1,9 @@
+{
+  "description": "Add a bulk insert for imported orders",
+  "filename": "src/orders-import.ts",
+  "bug": {
+    "line_contains": "client.release();",
+    "categories": ["bug", "performance", "correctness"],
+    "note": "The pooled client is released only on the success path; if `query` throws, the client leaks and the pool is exhausted after a few failures. Release belongs in `finally`."
+  }
+}

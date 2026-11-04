@@ -1,0 +1,9 @@
+{
+  "description": "Reject expired JWTs in the auth middleware",
+  "filename": "src/jwt-expiry.ts",
+  "bug": {
+    "line_contains": "return claims.exp < Date.now();",
+    "categories": ["bug", "security", "correctness"],
+    "note": "JWT `exp` is in seconds since the epoch; `Date.now()` is milliseconds, so every token looks expired (or, with the comparison flipped, never expires)."
+  }
+}

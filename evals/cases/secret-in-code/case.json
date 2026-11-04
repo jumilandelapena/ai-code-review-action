@@ -1,0 +1,9 @@
+{
+  "description": "Wire up the payment client for checkout",
+  "filename": "src/payments.ts",
+  "bug": {
+    "line_contains": "pay_live_",
+    "categories": ["security"],
+    "note": "A live secret key is committed in source; it must come from the environment or a secret store, and the leaked key must be rotated."
+  }
+}
