@@ -1,5 +1,6 @@
 import * as github from "@actions/github";
 import type { ChangedFile, FileStatus } from "../diff/types.js";
+import { withRetry } from "./retry.js";
 import type {
   CreateReviewParams,
   CreatedReview,
@@ -86,12 +87,14 @@ export class OctokitGitHubApi implements GitHubApi {
   }
 
   async listChangedFiles(ref: PullRef): Promise<ChangedFile[]> {
-    const files = await this.octokit.paginate(this.octokit.rest.pulls.listFiles, {
-      owner: ref.owner,
-      repo: ref.repo,
-      pull_number: ref.number,
-      per_page: 100,
-    });
+    const files = await withRetry(() =>
+      this.octokit.paginate(this.octokit.rest.pulls.listFiles, {
+        owner: ref.owner,
+        repo: ref.repo,
+        pull_number: ref.number,
+        per_page: 100,
+      }),
+    );
     return files.map(toChangedFile);
   }
 
@@ -147,20 +150,22 @@ export class OctokitGitHubApi implements GitHubApi {
   }
 
   async createReview(ref: PullRef, params: CreateReviewParams): Promise<CreatedReview> {
-    const { data } = await this.octokit.rest.pulls.createReview({
-      owner: ref.owner,
-      repo: ref.repo,
-      pull_number: ref.number,
-      commit_id: params.commitId,
-      event: params.event,
-      body: params.body,
-      comments: params.comments.map((comment) => ({
-        path: comment.path,
-        line: comment.line,
-        side: comment.side,
-        body: comment.body,
-      })),
-    });
+    const { data } = await withRetry(() =>
+      this.octokit.rest.pulls.createReview({
+        owner: ref.owner,
+        repo: ref.repo,
+        pull_number: ref.number,
+        commit_id: params.commitId,
+        event: params.event,
+        body: params.body,
+        comments: params.comments.map((comment) => ({
+          path: comment.path,
+          line: comment.line,
+          side: comment.side,
+          body: comment.body,
+        })),
+      }),
+    );
     return { id: data.id, htmlUrl: data.html_url };
   }
 
