@@ -1,0 +1,41 @@
+{
+  "name": "ai-code-review-action",
+  "version": "1.0.0",
+  "description": "Reviews every pull request with Claude and posts one review with inline comments, suggested fixes, and a summary.",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.17.1",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "ncc build src/main.ts -o dist --minify --license licenses.txt",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "eval": "tsx evals/run.ts",
+    "review:local": "tsx scripts/review-local.ts",
+    "check": "pnpm typecheck && pnpm test && pnpm build"
+  },
+  "dependencies": {
+    "@actions/core": "^3.0.1",
+    "@actions/github": "^9.1.1",
+    "@anthropic-ai/sdk": "^1.4.0",
+    "minimatch": "^11.0.4",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "@vercel/ncc": "^0.45.0",
+    "diff": "^9.0.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.0",
+    "vitest": "^5.1.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}
