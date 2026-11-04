@@ -1,0 +1,52 @@
+name: "AI Code Review with Claude"
+description: "Reviews every pull request with Claude and posts one review with inline comments, suggested fixes, and a summary."
+author: "Jumilan de la Peña"
+
+branding:
+  icon: "eye"
+  color: "purple"
+
+inputs:
+  anthropic_api_key:
+    description: "Anthropic API key. Pass it from a repository secret; it is never logged."
+    required: true
+  github_token:
+    description: "Token used to read the PR and post the review. Needs pull-requests: write."
+    required: false
+    default: ${{ github.token }}
+  model:
+    description: "Claude model id."
+    required: false
+    default: "claude-opus-5-5"
+  config_path:
+    description: "Path to the repo-level config file (ignore globs, focus, style_comments, language, max_findings)."
+    required: false
+    default: ".github/ai-review.yml"
+  fail_on:
+    description: "Fail the check when a finding is at least this severe: none, critical, high, medium, low, nit."
+    required: false
+    default: "none"
+  max_files:
+    description: "Stop reviewing after this many files; the summary says when the limit was hit."
+    required: false
+    default: "40"
+  max_diff_tokens:
+    description: "Input-token budget per model request, measured with the token counting endpoint. Large PRs are split into batches under this size."
+    required: false
+    default: "60000"
+
+outputs:
+  status:
+    description: "reviewed or skipped."
+  review_url:
+    description: "URL of the review that was posted."
+  findings_count:
+    description: "Number of findings reported (inline comments plus file-level notes)."
+  verdict:
+    description: "The model's verdict: approve, comment, or request_changes."
+  estimated_cost_usd:
+    description: "Estimated cost of the model calls for this run in USD."
+
+runs:
+  using: "node20"
+  main: "dist/index.js"
