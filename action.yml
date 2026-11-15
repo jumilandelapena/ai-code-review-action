@@ -35,6 +35,11 @@ inputs:
     required: false
     default: "60000"
 
+  max_cost_usd:
+    description: "Stop sending batches once the estimated spend for this run would exceed this many USD. 0 = unlimited."
+    required: false
+    default: "0"
+
 outputs:
   status:
     description: "reviewed or skipped."

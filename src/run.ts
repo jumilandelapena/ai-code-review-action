@@ -1,3 +1,4 @@
+import { BudgetTracker } from "./budget.js";
 import type { ReviewConfig } from "./config.js";
 import { estimateCost } from "./cost.js";
 import { attachContext } from "./diff/context.js";
@@ -26,6 +27,8 @@ export interface RunInputs {
   maxDiffTokens: number;
   /** Output budget per batch. 16k leaves room for 15 findings with suggestions plus thinking. */
   maxOutputTokens: number;
+  /** Per-run spending cap in USD; 0 or undefined means unlimited. */
+  maxCostUsd?: number;
 }
 
 export interface RunDeps {
@@ -121,6 +124,7 @@ export async function runReview(ref: PullRef, inputs: RunInputs, deps: RunDeps):
   const incompleteBatches: IncompleteBatch[] = [];
   let usage: TokenUsage = EMPTY_USAGE;
   let batchesSent = 0;
+  const budget = new BudgetTracker(inputs.model, inputs.maxCostUsd ?? 0);
   const queue = [...plan.batches];
   while (queue.length > 0) {
     const batch = queue.shift()!;
@@ -140,6 +144,16 @@ export async function runReview(ref: PullRef, inputs: RunInputs, deps: RunDeps):
       continue;
     }
 
+    if (await budget.wouldExceed(provider, { model: inputs.model, system, user })) {
+      log.warning(`stopping: this batch would push the run over max_cost_usd (${inputs.maxCostUsd})`);
+      for (const file of [batch, ...queue].flat()) {
+        skipped.push({ filename: file.filename, reason: `not reviewed: max_cost_usd (${inputs.maxCostUsd}) would be exceeded` });
+        parsedFiles.delete(file.filename);
+      }
+      queue.length = 0;
+      continue;
+    }
+
     batchesSent += 1;
     log.info(`sending batch ${batchesSent}: ${batch.length} file(s), ${measured} tokens`);
     const result = await provider.review({
@@ -155,6 +169,7 @@ export async function runReview(ref: PullRef, inputs: RunInputs, deps: RunDeps):
       })),
     });
     usage = addUsage(usage, result.usage);
+    budget.add(result.usage);
     if (result.status === "ok") {
       outputs.push(result.output);
       log.info(`batch ${batchesSent}: ${result.output.findings.length} finding(s), verdict ${result.output.verdict}`);
